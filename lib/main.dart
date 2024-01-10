@@ -68,12 +68,21 @@ class _HomePageState extends State<HomePage> {
                 text: 'C',
               ),
               CalculatorButton(
-                
+                onTapped: () {
+                  setState(() {
+                    showText('+/-');
+                  });
+                },
                 backgroundColor: Colors.grey[400]!,
                 foregroundColor: colorDark,
                 text: '+/-',
               ),
               CalculatorButton(
+                onTapped: () {
+                  setState(() {
+                    showText('%');
+                  });
+                },
                 backgroundColor: Colors.grey[400]!,
                 foregroundColor: colorDark,
                 text: '%',
@@ -123,6 +132,11 @@ class _HomePageState extends State<HomePage> {
                 text: '9',
               ),
               CalculatorButton(
+                onTapped: () {
+                  setState(() {
+                    showText('/');
+                  });
+                },
                 backgroundColor: colorDark,
                 foregroundColor: colorLight,
                 text: '/',
@@ -152,6 +166,11 @@ class _HomePageState extends State<HomePage> {
                 text: '6',
               ),
               CalculatorButton(
+                onTapped: () {
+                  setState(() {
+                    showText('*');
+                  });
+                },
                 backgroundColor: colorDark,
                 foregroundColor: colorLight,
                 text: 'x',
@@ -181,6 +200,11 @@ class _HomePageState extends State<HomePage> {
                 text: '3',
               ),
               CalculatorButton(
+                onTapped: () {
+                  setState(() {
+                    showText('-');
+                  });
+                },
                 backgroundColor: colorDark,
                 foregroundColor: colorLight,
                 text: '-',
@@ -236,9 +260,22 @@ class _HomePageState extends State<HomePage> {
     try {
       Expression expression = parser.parse(onScreenText);
       double result = expression.evaluate(EvaluationType.REAL, contextModel);
-      setState(() {
-        onScreenText = result.toString();
-      });
+
+      if (onScreenText.contains('%')) {
+        double percentage = result / 100;
+        setState(() {
+          onScreenText = percentage.toString();
+        });
+      } else if (onScreenText.contains('+/-')) {
+        setState(() {
+          onScreenText = (-result).toString();
+        });
+      } else {
+        int resultAsInt = result.toInt();
+        setState(() {
+          onScreenText = resultAsInt.toString();
+        });
+      }
     } catch (e) {
       setState(() {
         onScreenText = 'Error';
