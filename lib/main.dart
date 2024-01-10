@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:math_expressions/math_expressions.dart';
 
 void main() {
   runApp(CalculatorApp());
@@ -27,7 +28,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String onScreenText = '0';
+  String onScreenText = '';
+  Parser parser = Parser();
+  ContextModel contextModel = ContextModel();
 
   @override
   Widget build(BuildContext context) {
@@ -57,20 +60,21 @@ class _HomePageState extends State<HomePage> {
               CalculatorButton(
                 onTapped: () {
                   setState(() {
-                    onScreenText = '0';
+                    clearScreen();
                   });
                 },
-                backgroundColor: colorLight,
+                backgroundColor: Colors.grey[400]!,
                 foregroundColor: colorDark,
                 text: 'C',
               ),
               CalculatorButton(
-                backgroundColor: colorLight,
+                
+                backgroundColor: Colors.grey[400]!,
                 foregroundColor: colorDark,
                 text: '+/-',
               ),
               CalculatorButton(
-                backgroundColor: colorLight,
+                backgroundColor: Colors.grey[400]!,
                 foregroundColor: colorDark,
                 text: '%',
               ),
@@ -96,7 +100,7 @@ class _HomePageState extends State<HomePage> {
               ),
               CalculatorButton(
                 onTapped: () {
-                  numberPressed(7);
+                  showText('7');
                 },
                 backgroundColor: colorLight,
                 foregroundColor: colorDark,
@@ -104,7 +108,7 @@ class _HomePageState extends State<HomePage> {
               ),
               CalculatorButton(
                 onTapped: () {
-                  numberPressed(8);
+                  showText('8');
                 },
                 backgroundColor: colorLight,
                 foregroundColor: colorDark,
@@ -112,7 +116,7 @@ class _HomePageState extends State<HomePage> {
               ),
               CalculatorButton(
                 onTapped: () {
-                  numberPressed(9);
+                  showText('9');
                 },
                 backgroundColor: colorLight,
                 foregroundColor: colorDark,
@@ -125,7 +129,7 @@ class _HomePageState extends State<HomePage> {
               ),
               CalculatorButton(
                 onTapped: () {
-                  numberPressed(4);
+                  showText('4');
                 },
                 backgroundColor: colorLight,
                 foregroundColor: colorDark,
@@ -133,7 +137,7 @@ class _HomePageState extends State<HomePage> {
               ),
               CalculatorButton(
                 onTapped: () {
-                  numberPressed(5);
+                  showText('5');
                 },
                 backgroundColor: colorLight,
                 foregroundColor: colorDark,
@@ -141,7 +145,7 @@ class _HomePageState extends State<HomePage> {
               ),
               CalculatorButton(
                 onTapped: () {
-                  numberPressed(6);
+                  showText('6');
                 },
                 backgroundColor: colorLight,
                 foregroundColor: colorDark,
@@ -154,7 +158,7 @@ class _HomePageState extends State<HomePage> {
               ),
               CalculatorButton(
                 onTapped: () {
-                  numberPressed(1);
+                  showText('1');
                 },
                 backgroundColor: colorLight,
                 foregroundColor: colorDark,
@@ -162,7 +166,7 @@ class _HomePageState extends State<HomePage> {
               ),
               CalculatorButton(
                 onTapped: () {
-                  numberPressed(2);
+                  showText('2');
                 },
                 backgroundColor: colorLight,
                 foregroundColor: colorDark,
@@ -170,7 +174,7 @@ class _HomePageState extends State<HomePage> {
               ),
               CalculatorButton(
                 onTapped: () {
-                  numberPressed(3);
+                  showText('3');
                 },
                 backgroundColor: colorLight,
                 foregroundColor: colorDark,
@@ -183,7 +187,7 @@ class _HomePageState extends State<HomePage> {
               ),
               CalculatorButton(
                 onTapped: () {
-                  numberPressed(0);
+                  showText('0');
                 },
                 backgroundColor: colorLight,
                 foregroundColor: colorDark,
@@ -202,14 +206,24 @@ class _HomePageState extends State<HomePage> {
                 text: '.',
               ),
               CalculatorButton(
+                onTapped: () {
+                  setState(() {
+                    calculateResult();
+                  });
+                },
                 backgroundColor: Colors.grey[400]!,
                 foregroundColor: colorDark,
                 text: '=',
               ),
               CalculatorButton(
+                onTapped: () {
+                  setState(() {
+                    showText('+');
+                  });
+                },
                 backgroundColor: colorDark,
                 foregroundColor: colorLight,
-                text: '=',
+                text: '+',
               ),
             ],
           ),
@@ -218,7 +232,27 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void numberPressed(int number) {
+  void calculateResult() {
+    try {
+      Expression expression = parser.parse(onScreenText);
+      double result = expression.evaluate(EvaluationType.REAL, contextModel);
+      setState(() {
+        onScreenText = result.toString();
+      });
+    } catch (e) {
+      setState(() {
+        onScreenText = 'Error';
+      });
+    }
+  }
+
+  void clearScreen() {
+    setState(() {
+      onScreenText = '';
+    });
+  }
+
+  void showText(String number) {
     setState(() {
       if (onScreenText == '0') {
         onScreenText = '$number';
